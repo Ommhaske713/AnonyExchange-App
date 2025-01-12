@@ -13,12 +13,12 @@ export async function POST(request: Request) {
             username,
             isVerified: true,
         });
-
+        
         if (existingVerifiedUserByUsername) {
             return Response.json(
                 {
                     success: false,
-                    message: 'Username is already taken',
+                    message: 'Username is already taken. Please try a different one.',
                 },
                 { status: 400 }
             );
