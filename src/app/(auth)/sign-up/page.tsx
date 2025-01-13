@@ -67,7 +67,7 @@ const SignUpPage = () => {
 
         try {
           const response = await axios.get(`/api/check-unique-email?email=${debouncedEmail}`);
-          setEmailMessage('');
+          setEmailMessage('email is unique');
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;
           setEmailMessage(axiosError.response?.data.message ?? "User already exists with this email.");
@@ -173,7 +173,7 @@ const SignUpPage = () => {
                   {!isCheckingEmail && emailMessage && (
                     <p
                       className={`text-sm ${
-                        emailMessage === '' ? 'text-green-500' : 'text-red-500'
+                        emailMessage === 'email is unique' ? 'text-green-500' : 'text-red-500'
                       }`}
                     >
                       {emailMessage}
