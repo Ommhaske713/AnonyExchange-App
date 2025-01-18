@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useDebounce } from '@uidotdev/usehooks';
 import {
   Form,
   FormControl,
@@ -18,10 +20,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { signInSchema } from '@/schema/signInSchema';
-import { Lock, Mail, User } from "lucide-react";
+import { Loader2, Lock, Mail, User } from "lucide-react";
+import axios, { AxiosError } from 'axios';
+import { ApiResponse } from '@/types/ApiResponse';
 
 export default function SignInForm() {
   const router = useRouter();
+  const [identifier, setIdentifier] = useState('');
+  const [identifierMessage, setIdentifierMessage] = useState('');
+  const [isCheckingIdentifier, setIsCheckingIdentifier] = useState(false);
+  const debouncedIdentifier = useDebounce(identifier, 500);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -31,7 +40,27 @@ export default function SignInForm() {
     },
   });
 
-  const { toast } = useToast();
+  useEffect(() => {
+    const checkIdentifierExists = async () => {
+      if (debouncedIdentifier) {
+        setIsCheckingIdentifier(true);
+        setIdentifierMessage('');
+
+        try {
+          const response = await axios.get(`/api/check-identifier?identifier=${debouncedIdentifier}`);
+          setIdentifierMessage('User exist with this username/email.');
+        } catch (error) {
+          const axiosError = error as AxiosError<ApiResponse>;
+          setIdentifierMessage(axiosError.response?.data.message ?? "No user exists with this username/email.");
+        } finally {
+          setIsCheckingIdentifier(false);
+        }
+      }
+    };
+
+    checkIdentifierExists();
+  }, [debouncedIdentifier]);
+
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     const result = await signIn('credentials', {
       redirect: false,
@@ -77,13 +106,35 @@ export default function SignInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email/Username</FormLabel>
-                  <Input {...field} />
+                  <FormControl>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        {...field}
+                        className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setIdentifier(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </FormControl>
+                  {isCheckingIdentifier && <Loader2 className="animate-spin text-indigo-500" />}
+                  {!isCheckingIdentifier && identifierMessage && (
+                    <p
+                      className={`text-sm ${
+                        identifierMessage === 'User exist with this username/email.' ? 'text-green-500' : 'text-red-500'
+                      }`}
+                    >
+                      {identifierMessage}
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
-             <FormField
-              name="identifier"
+            <FormField
+              name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
@@ -98,16 +149,21 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <Button className='w-full className="w-full bg-gradient-to-r from-black to-[#8793ac] text-white font-semibold py-2 rounded-md shadow-lg hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all"' type="submit">Sign In</Button>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-black to-[#8793ac] text-white font-semibold py-2 rounded-md shadow-lg hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all"
+            >
+              Sign In
+            </Button>
           </form>
         </Form>
         <div className="text-center mt-4">
-          <p>
-            Not a member yet?{' '}
+          <p className="text-gray-700">
+            Don't have an account?{' '}
             <Link href="/sign-up" className="text-[#8793ac] hover:text-indigo-600 font-semibold">
               Sign up
             </Link>
-          </p> 
+          </p>
         </div>
       </div>
     </div>
