@@ -12,7 +12,6 @@ function Navbar() {
   return (
     <header className="flex justify-between items-center p-[10px] bg-[#212838]">
       <div className="w-full flex items-center">
-        {/* Navigation Links */}
         <nav className={styles.nav}>
           <Link href="/" className={styles.link}>
             Home
