@@ -6,4 +6,3 @@ export interface ApiResponse{
     isAcceptingMessage?:boolean;
     messages?: Array<Message>
 }
-
