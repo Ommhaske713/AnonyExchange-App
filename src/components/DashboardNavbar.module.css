@@ -1,0 +1,78 @@
+.nav {
+    position: relative;
+    width: 100%;
+    max-width: 650px; 
+    height: 50px;
+    background: #8793ac;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 0px 1px 1px 470px; 
+}
+
+.link {
+    position: relative;
+    display: inline-block;
+    font-size: medium;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+    padding: 0 40px;
+    z-index: 2;
+    transition: color 0.5s;
+}
+
+.link:hover {
+    color: white;
+}
+
+.span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 95px;
+    height: 100%;
+    background: linear-gradient(45deg, #194b4f, #33fffc);
+    border-radius: 10px;
+    transition: left 0.5s;
+    z-index: 0;
+}
+
+.slidingDiv {
+    position: absolute;
+    top: 10px;
+    left: 99px;
+    width: 70px;
+    height: 30px;
+    background-color: #212838;
+    border-radius: 5px;
+    transition: left 0.5s;
+    z-index: 1;
+}
+
+.nav .link:nth-child(1):hover ~ .span,
+.nav .link:nth-child(1):hover ~ .slidingDiv {
+    left: 99;
+}
+
+.nav .link:nth-child(2):hover ~ .span,
+.nav .link:nth-child(2):hover ~ .slidingDiv {
+    left: 225px;
+}
+
+.nav .link:nth-child(3):hover ~ .span,
+.nav .link:nth-child(3):hover ~ .slidingDiv {
+    left: 345px;
+}
+
+.nav .link:nth-child(4):hover ~ .span,
+.nav .link:nth-child(4):hover ~ .slidingDiv {
+    left: 470px;
+}
+
+.nav .link:nth-child(5):hover ~ .span,
+.nav .link:nth-child(5):hover ~ .slidingDiv {
+    left: 455px;
+}
