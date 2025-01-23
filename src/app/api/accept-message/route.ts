@@ -5,121 +5,111 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 
 export async function POST(request: Request) {
-    await dbConnect()
+    await dbConnect();
 
-    const session = await getServerSession(authOptions)
-
-    const user: User = session?.user
+    const session = await getServerSession(authOptions);
+    const user: User = session?.user;
 
     if (!session || !session.user) {
-        return Response.json({
+        console.log("User not authenticated");
+        return new Response(JSON.stringify({
             success: false,
-            message: "not verified"
-        },
-            {
-                status: 401
-            }
-        )
+            message: "User not authenticated"
+        }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     const userId = user._id;
-
-    const { acceptMessage } = await request.json();
+    const { acceptMessages } = await request.json();
 
     try {
-
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
-            { isAcceptingMessages: acceptMessage },
+            { isAcceptingMessages: acceptMessages },
             { new: true }
-        )
+        );
 
         if (!updatedUser) {
-            return Response.json({
+            console.log("User not found");
+            return new Response(JSON.stringify({
                 success: false,
-                message: "failed to update the status to accept the messages"
-            },
-                {
-                    status: 401
-                }
-            )
+                message: "User not found"
+            }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
-        return Response.json({
+        return new Response(JSON.stringify({
             success: true,
-            message: "message acceptance status updated successfully"
-        },
-            {
-                status: 201
-            }
-        )
+            message: "Message acceptance status updated successfully"
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
 
     } catch (error) {
-        console.log("failed to update the status to accept the messages")
-        return Response.json({
+        console.log("Failed to update message acceptance status:", error);
+        return new Response(JSON.stringify({
             success: false,
-            message: "failed to update the status to accept the messages"
-        },
-            {
-                status: 500
-            }
-        )
+            message: "Failed to update message acceptance status"
+        }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 }
 
 export async function GET(request: Request) {
-    await dbConnect()
+    await dbConnect();
 
-    const session = await getServerSession(authOptions)
-
-    const user: User = session?.user
+    const session = await getServerSession(authOptions);
+    const user: User = session?.user;
 
     if (!session || !session.user) {
-        return Response.json({
+        console.log("User not authenticated");
+        return new Response(JSON.stringify({
             success: false,
-            message: "not verified"
-        },
-            {
-                status: 401
-            }
-        )
+            message: "User not authenticated"
+        }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     const userId = user._id;
 
     try {
-        const foundUser = await UserModel.findById(userId)
-    
-        if (!foundUser) {
-            return Response.json({
-                success: false,
-                message: "user not found"
-            },
-                {
-                    status: 404
-                }
-            )
-        }
-        return Response.json({
-            success: true,
-            message: "message acceptance status changed",
-            isAcceptingMessage: foundUser?.isAcceptingMessages
-            
-        },
-            {
-                status: 201
-            }
-        )
-    } catch (error) {
+        const foundUser = await UserModel.findById(userId);
 
-        console.log("Error in getting message acceptance status : ",error)
-        return Response.json({
+        if (!foundUser) {
+            console.log("User not found");
+            return new Response(JSON.stringify({
+                success: false,
+                message: "User not found"
+            }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        return new Response(JSON.stringify({
+            success: true,
+            isAcceptingMessage: foundUser.isAcceptingMessages
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        console.log("Error in getting message acceptance status:", error);
+        return new Response(JSON.stringify({
             success: false,
             message: "Error in getting message acceptance status"
-        },
-            {
-                status: 500
-            }
-        )
-     }
+        }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 }
