@@ -8,9 +8,9 @@ import styles from './DashboardNavbar.module.css';
 
 function DashboardNavbar() {
   const { data: session } = useSession();
-
+  
   return (
-    <header className="flex justify-between items-center p-[10px] bg-[#212838]">
+    <header className="flex justify-between items-center p-[10px] bg-[#212838]" style={{ margin: '-800px 0px 0px 0px' }}>
       <div className="w-full flex items-center">
         <nav className={styles.nav}>
           <Link href="/" className={styles.link}>
@@ -54,4 +54,4 @@ function DashboardNavbar() {
   );
 }
 
-export default DashboardNavbar;
+export default DashboardNavbar  ;
