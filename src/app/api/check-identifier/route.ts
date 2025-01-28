@@ -18,7 +18,7 @@ export async function GET(request: Request) {
         { status: 400 }
       );
     }
-
+    
     const user = await UserModel.findOne({
       $or: [{ username: identifier }, { email: identifier }],
     });
