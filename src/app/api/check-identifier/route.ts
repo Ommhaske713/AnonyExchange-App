@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: 'No user exists with this identifier',
+          message: 'No user exists with this email/username',
         },
         { status: 404 }
       );
