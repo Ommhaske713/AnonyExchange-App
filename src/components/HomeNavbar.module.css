@@ -1,0 +1,62 @@
+.nav {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    height: 45px;
+    background: rgba(135, 147, 172, 0.2);
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto;
+    backdrop-filter: blur(8px);
+}
+
+.link {
+    position: relative;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    text-decoration: none;
+    padding: 8px 20px;
+    z-index: 2;
+    transition: all 0.3s ease-in-out;
+}
+
+.link:hover {
+    color: white;
+}
+
+.slidingDiv {
+    position: absolute;
+    top: 7px;
+    height: 32px;
+    width: 75px;
+    background-color: rgba(26, 31, 46, 0.8);
+    border-radius: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    left: 27px; 
+}
+
+.nav .link:nth-child(1):hover ~ .slidingDiv {
+    left: 27px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav .link:nth-child(2):hover ~ .slidingDiv {
+    left: 163px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav .link:nth-child(3):hover ~ .slidingDiv {
+    left: 295px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav .link:nth-child(4):hover ~ .slidingDiv {
+    left: 438px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
