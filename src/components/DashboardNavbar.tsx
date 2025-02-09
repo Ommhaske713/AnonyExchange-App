@@ -10,7 +10,7 @@ function DashboardNavbar() {
   const { data: session } = useSession();
   
   return (
-    <header className="flex justify-between items-center p-[10px] bg-[#212838]" style={{ margin: '-800px 0px 0px 0px' }}>
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-[10px] bg-[rgba(14, 24, 47, 0)] ">
       <div className="w-full flex items-center">
         <nav className={styles.nav}>
           <Link href="/" className={styles.link}>
@@ -54,4 +54,4 @@ function DashboardNavbar() {
   );
 }
 
-export default DashboardNavbar  ;
+export default DashboardNavbar;
