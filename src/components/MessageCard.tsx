@@ -2,7 +2,7 @@
 
 import React from 'react';
 import axios, { AxiosError } from 'axios';
-import { X } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 import { Message } from '@/model/User';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -50,37 +50,57 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
   };
 
   return (
-    <Card className="card-bordered">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle>{message.content}</CardTitle>
+    <Card className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
+      <CardHeader className="p-0 mb-4">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-xl font-medium tracking-tight text-black leading-relaxed">
+            {message.content}
+          </CardTitle>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant='destructive'>
-                <X className="w-5 h-5" />
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="opacity-0 group-hover:opacity-100 -mt-1 p-2 text-red-600 hover:text-red-600 hover:bg-red-100 transition-all duration-300"
+              >
+                <Trash2 className="h-5 w-5 " />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white/10 backdrop-blur-lg border border-white/10">
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  this message.
+                <AlertDialogTitle className="text-white">Delete Message</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-300">
+                  This action cannot be undone. This message will be permanently deleted.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>
+                <AlertDialogCancel className="bg-white/5 text-white hover:bg-white/10 border-white/10">
                   Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteConfirm}>
-                  Continue
+                <AlertDialogAction
+                  onClick={handleDeleteConfirm}
+                  className="bg-red-500 hover:bg-red-600 text-white border-0"
+                >
+                  Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
       </CardHeader>
-      <CardContent></CardContent>
+      <CardContent className="p-0">
+        <div className="flex items-center gap-2 mt-2">
+          <span className="text-sm text-slate-400">
+            {new Date(message.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </span>
+        </div>
+      </CardContent>
     </Card>
   );
 }
