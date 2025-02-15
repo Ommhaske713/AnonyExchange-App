@@ -90,82 +90,89 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-800 via-[#8793ac] to-black">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg transition-shadow hover:shadow-xl ">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Welcome Back to True Feedback
-          </h1>
-          <p className="mb-4">Sign in to continue your secret conversations</p>
-        </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              name="identifier"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email/Username</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                      <Input
-                        {...field}
-                        className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setIdentifier(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </FormControl>
-                  {isCheckingIdentifier && <Loader2 className="animate-spin text-indigo-500" />}
-                  {!isCheckingIdentifier && identifierMessage && (
-                    <p
-                      className={`text-sm ${
-                        identifierMessage === 'User exist with this username/email.' ? 'text-green-500' : 'text-red-500'
-                      }`}
-                    >
-                      {identifierMessage}
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                      <Input {...field} type="password" className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-black to-[#8793ac] text-white font-semibold py-2 rounded-md shadow-lg hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all"
-            >
-              Sign In
-            </Button>
-          </form>
-        </Form>
-        <div className="text-center mt-4">
-          <p className="text-gray-700">
-            Don't have an account?{' '}
-            <Link href="/sign-up" className="text-[#8793ac] hover:text-indigo-600 font-semibold">
-              Sign up
-            </Link>
-          </p>
-        </div>
+  <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-800 via-[#8793ac] to-black transition-all duration-500">
+    <div className="w-full max-w-md p-8 space-y-8 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-white/100">
+      <div className="text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6 bg-gradient-to-r from-[#1a1f2e] to-[#8793ac] text-transparent bg-clip-text">
+          Welcome Back to True Feedback
+        </h1>
+        <p className="mb-4 text-gray-600">Sign in to continue your secret conversations</p>
+      </div>
+      
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            name="identifier"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Email/Username</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <Input
+                      {...field}
+                      className="pl-10 border-gray-300 focus:border-[#8793ac] focus:ring-[#8793ac] transition-all duration-300"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setIdentifier(e.target.value);
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                {isCheckingIdentifier && <Loader2 className="animate-spin text-[#8793ac]" />}
+                {!isCheckingIdentifier && identifierMessage && (
+                  <p className={`text-sm ${identifierMessage === 'User exist with this username/email.' ? 'text-green-500' : 'text-red-500'}`}>
+                    {identifierMessage}
+                  </p>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            name="password"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <Input 
+                      {...field} 
+                      type="password" 
+                      className="pl-10 border-gray-300 focus:border-[#8793ac] focus:ring-[#8793ac] transition-all duration-300" 
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#1a1f2e] to-[#8793ac] text-white font-semibold py-2 rounded-md shadow-lg hover:from-[#8793ac] hover:to-[#1a1f2e] focus:outline-none focus:ring-4 focus:ring-[#8793ac]/50 transition-all duration-300"
+          >
+            Sign In
+          </Button>
+        </form>
+      </Form>
+
+      <div className="text-center mt-4">
+        <p className="text-gray-700">
+          Don't have an account?{' '}
+          <Link 
+            href="/sign-up" 
+            className="text-[#8793ac] hover:text-[#1a1f2e] font-semibold transition-colors duration-300"
+          >
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
-  );
+  </div>
+);
 }
