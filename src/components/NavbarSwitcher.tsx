@@ -9,9 +9,15 @@ import HomeNavbar from './HomeNavbar';
 const NavbarSwitcher = () => {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith('/dashboard');
+  const isSignin = pathname.startsWith('/sign-in');
+
   const isHome = pathname === '/';
 
   if (isHome) {
+    return <HomeNavbar />;
+  }
+
+  if (isSignin) {
     return <HomeNavbar />;
   }
 
