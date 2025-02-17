@@ -21,7 +21,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 export default function SignIn() {
   const router = useRouter();
   const { toast } = useToast();
-  const pathname = usePathname();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleBackToHome = (e: React.MouseEvent) => {
