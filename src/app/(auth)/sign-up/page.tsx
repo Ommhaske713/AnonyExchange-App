@@ -12,9 +12,10 @@ import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Lock, Mail, User } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signUpSchema } from "@/schema/signUpSchema";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SignUpPage = () => {
   const [username, setUsername] = useState('');
@@ -106,125 +107,163 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-800 via-[#8793ac] to-black">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg transition-shadow hover:shadow-xl ">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 lg:text-5xl mb-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-[#1a1f2e] to-black relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10 pointer-events-none" />
+      
+      {/* Decorative Gradient Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-[#00000033] rounded-full blur-3xl" />
+
+      {/* Back Button */}
+      <div className="absolute top-8 left-8 z-20">
+        <Button
+          variant="ghost"
+          className="text-gray-400 hover:text-white hover:bg-white/10"
+          onClick={() => router.push('/')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
+      <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl relative z-10">
+        <CardHeader className="space-y-4 text-center">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mb-2">
+            <User className="w-8 h-8 text-blue-400" />
+          </div>
+          <CardTitle className="text-3xl font-bold text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Join True Feedback
-          </h1>
-          <p className="text-gray-600 mb-4">Sign up to start your anonymous adventure</p>
-        </div>
+          </CardTitle>
+          <p className="text-gray-400">
+            Sign up to start your anonymous journey
+          </p>
+        </CardHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              name="username"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Username</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                      <Input
-                        {...field}
-                        className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setUsername(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </FormControl>
-                  {isCheckingUsername && <Loader2 className="animate-spin text-indigo-500" />}
-                  {!isCheckingUsername && usernameMessage && (
-                    <p
-                      className={`text-sm ${
-                        usernameMessage === 'Username is available' ? 'text-green-500' : 'text-red-500'
-                      }`}
-                    >
-                      {usernameMessage}
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="email"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Email</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                      <Input
-                        {...field}
-                        type="email"
-                        className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setEmail(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </FormControl>
-                  {isCheckingEmail && <Loader2 className="animate-spin text-indigo-500" />}
-                  {!isCheckingEmail && emailMessage && (
-                    <p
-                      className={`text-sm ${
-                        emailMessage === '' ? 'text-green-500' : 'text-red-500'
-                      }`}
-                    >
-                      {emailMessage}
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <CardContent className="space-y-6">
+              {/* Username Field */}
+              <FormField
+                name="username"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-300">Username</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <Input
+                          {...field}
+                          className="pl-10 bg-white/10 border-white/10 text-white focus:ring-blue-500 focus:border-blue-500 rounded-xl h-12"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setUsername(e.target.value);
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    {isCheckingUsername && (
+                      <div className="flex items-center mt-2 text-sm text-blue-500">
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                        Checking...
+                      </div>
+                    )}
+                    {!isCheckingUsername && usernameMessage && (
+                      <p className={`text-sm ${usernameMessage === 'Username is available' ? 'text-green-500' : 'text-red-500'}`}>
+                        {usernameMessage}
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                      <Input {...field} type="password" className="pl-10 focus:border-indigo-500 focus:ring-indigo-500 transition-all" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-black to-[#8793ac] text-white font-semibold py-2 rounded-md shadow-lg hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" />
-                  Please wait
-                </>
-              ) : (
-                'Sign Up'
-              )}
-            </Button>
+              {/* Email Field */}
+              <FormField
+                name="email"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-300">Email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <Input
+                          {...field}
+                          type="email"
+                          className="pl-10 bg-white/10 border-white/10 text-white focus:ring-blue-500 focus:border-blue-500 rounded-xl h-12"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setEmail(e.target.value);
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    {isCheckingEmail && (
+                      <div className="flex items-center mt-2 text-sm text-blue-500">
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                        Checking...
+                      </div>
+                    )}
+                    {!isCheckingEmail && emailMessage && (
+                      <p className={`text-sm ${emailMessage === '' ? 'text-green-500' : 'text-red-500'}`}>
+                        {emailMessage}
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Password Field */}
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-300">Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <Input
+                          {...field}
+                          type="password"
+                          className="pl-10 bg-white/10 border-white/10 text-white focus:ring-blue-500 focus:border-blue-500 rounded-xl h-12"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+
+            <CardFooter className="flex flex-col space-y-4">
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-6 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-[0_0_15px_rgba(66,153,225,0.4)] hover:shadow-[0_0_20px_rgba(66,153,225,0.6)]"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  'Sign Up'
+                )}
+              </Button>
+              <p className="text-center text-gray-400 text-sm">
+                Already have an account?{' '}
+                <Link href="/sign-in" className="text-blue-400 hover:text-blue-300 transition-colors">
+                  Sign in
+                </Link>
+              </p>
+            </CardFooter>
           </form>
         </Form>
-        <div className="text-center mt-4">
-          <p className="text-gray-700">
-            Already a member?{' '}
-            <Link href="/sign-in" className="text-[#8793ac] hover:text-indigo-600 font-semibold">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </div>
+      </Card>
     </div>
   );
 };
