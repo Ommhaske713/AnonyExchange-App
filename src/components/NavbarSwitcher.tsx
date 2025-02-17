@@ -10,6 +10,8 @@ const NavbarSwitcher = () => {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith('/dashboard');
   const isSignin = pathname.startsWith('/sign-in');
+  const isSignup = pathname.startsWith('/sign-up');
+
 
   const isHome = pathname === '/';
 
@@ -18,6 +20,10 @@ const NavbarSwitcher = () => {
   }
 
   if (isSignin) {
+    return <HomeNavbar />;
+  }
+
+  if (isSignup) {
     return <HomeNavbar />;
   }
 
