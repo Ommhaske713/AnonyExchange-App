@@ -5,13 +5,15 @@ import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import DashboardNavbar from './DashboardNavbar';
 import HomeNavbar from './HomeNavbar';
+import UserModel from '@/model/User';
+import { verify } from 'crypto';
 
 const NavbarSwitcher = () => {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith('/dashboard');
   const isSignin = pathname.startsWith('/sign-in');
   const isSignup = pathname.startsWith('/sign-up');
-
+  const isVerify = pathname.startsWith('/verify');
 
   const isHome = pathname === '/';
 
@@ -25,6 +27,10 @@ const NavbarSwitcher = () => {
 
   if (isSignup) {
     return <HomeNavbar />;
+  }
+
+  if (isVerify) {
+    return null
   }
 
   return isDashboard ? <DashboardNavbar /> : <Navbar />;
