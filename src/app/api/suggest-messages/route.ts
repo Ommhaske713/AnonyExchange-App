@@ -1,16 +1,16 @@
 export const runtime = 'edge';
 
-export async function POST(req:Request) {
+export async function POST(req: Request) {
   try {
-    const prompt =
-      "Create a list of three open-ended and engaging questions formatted as a single string. Each question should be separated by '||'. These questions are for an anonymous social messaging platform, like Qooh.me, and should be suitable for a diverse audience. Avoid personal or sensitive topics, focusing instead on universal themes that encourage friendly interaction. For example, your output should be structured like this: 'What's a hobby you've recently started?||If you could have dinner with any historical figure, who would it be?||What's a simple thing that makes you happy?'. Ensure the questions are intriguing, foster curiosity, and contribute to a positive and welcoming conversational environment.";
-
     const questions = generateQuestions();
 
-    return new Response(JSON.stringify({ text: questions , message:'message generated successfully'}), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ text: questions, message: 'Message generated successfully' }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Error generating suggestions:', error);
     return new Response(
@@ -24,7 +24,6 @@ export async function POST(req:Request) {
 }
 
 function generateQuestions() {
-
   const questionTemplates = [
     "What's something new you've learned recently?",
     "If you could visit any place in the world, where would it be?",
@@ -36,8 +35,6 @@ function generateQuestions() {
     "If you could have any superpower, what would it be and why?",
     "What's a food or dish you could eat every day?",
     "What's one thing you're grateful for today?",
-  ];
-const additionalQuestions = [
     "What's your favorite way to relax after a long day?",
     "If you could have any job for a day, what would it be?",
     "What's a goal you're currently working towards?",
@@ -79,20 +76,21 @@ const additionalQuestions = [
     "If you could have any job in the world, what would it be?",
     "What's a tradition you want to start?",
     "If you could have any view from your home, what would it be?",
-];
+  ];
 
-questionTemplates.push(...additionalQuestions);
-
+  // Shuffle the array to randomize selection
   shuffleArray(questionTemplates);
 
+  // Select first three questions
   const selectedQuestions = questionTemplates.slice(0, 3);
-  
+
   return selectedQuestions.join('||');
 }
 
+// Function to shuffle an array
 function shuffleArray(array: string[]): void {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
