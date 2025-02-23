@@ -43,7 +43,7 @@
 .slidingDiv {
     position: absolute;
     top: 10px;
-    left: 99px;
+    left: 159px;
     width: 70px;
     height: 30px;
     background-color: #868c9abf;
@@ -54,17 +54,17 @@
 
 .nav .link:nth-child(1):hover ~ .span,
 .nav .link:nth-child(1):hover ~ .slidingDiv {
-    left: 99;
+    left: 159px;
 }
 
 .nav .link:nth-child(2):hover ~ .span,
 .nav .link:nth-child(2):hover ~ .slidingDiv {
-    left: 225px;
+    left: 282px;
 }
 
 .nav .link:nth-child(3):hover ~ .span,
 .nav .link:nth-child(3):hover ~ .slidingDiv {
-    left: 345px;
+    left: 410px;
 }
 
 .nav .link:nth-child(4):hover ~ .span,
