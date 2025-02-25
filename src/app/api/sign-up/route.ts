@@ -9,17 +9,10 @@ export async function POST(request: Request) {
     try {
         const { username, email, password } = await request.json();
 
-        const existingVerifiedUserByUsername = await UserModel.findOne({
-            username,
-            isVerified: true,
-        });
-        
-        if (existingVerifiedUserByUsername) {
+        const existingUserByUsername = await UserModel.findOne({ username });
+        if (existingUserByUsername) {
             return Response.json(
-                {
-                    success: false,
-                    message: 'Username is already taken. Please try a different one.',
-                },
+                { success: false, message: 'Username is already taken. Please try a different one.' },
                 { status: 400 }
             );
         }
@@ -30,10 +23,7 @@ export async function POST(request: Request) {
         if (existingUserByEmail) {
             if (existingUserByEmail.isVerified) {
                 return Response.json(
-                    {
-                        success: false,
-                        message: 'User already exists with this email',
-                    },
+                    { success: false, message: 'User already exists with this email' },
                     { status: 400 }
                 );
             } else {
@@ -62,36 +52,22 @@ export async function POST(request: Request) {
             await newUser.save();
         }
 
-        // Send verification email
-        const emailResponse = await sendVerificationEmail(
-            email,
-            username,
-            verifyCode
-        );
+        const emailResponse = await sendVerificationEmail(email, username, verifyCode);
         if (!emailResponse.success) {
             return Response.json(
-                {
-                    success: false,
-                    message: emailResponse.message,
-                },
+                { success: false, message: emailResponse.message },
                 { status: 500 }
             );
         }
 
         return Response.json(
-            {
-                success: true,
-                message: 'User registered successfully. Please verify your account.',
-            },
+            { success: true, message: 'User registered successfully. Please verify your account.' },
             { status: 201 }
         );
     } catch (error) {
         console.error('Error registering user:', error);
         return Response.json(
-            {
-                success: false,
-                message: 'Error registering user',
-            },
+            { success: false, message: 'Error registering user' },
             { status: 500 }
         );
     }
