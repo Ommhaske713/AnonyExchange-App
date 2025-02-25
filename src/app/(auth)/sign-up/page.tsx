@@ -12,7 +12,7 @@ import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Loader2, Lock, Mail, User } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signUpSchema } from "@/schema/signUpSchema";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,7 @@ const SignUpPage = () => {
   const debouncedEmail = useDebounce(email, 500);
   const { toast } = useToast();
   const router = useRouter();
-
+  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -38,6 +38,10 @@ const SignUpPage = () => {
       password: ''
     },
   });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     const checkUsernameUnique = async () => {
@@ -89,9 +93,12 @@ const SignUpPage = () => {
       toast({
         title: response.data.success ? 'Success' : 'Error',
         description: response.data.message || (response.data.success ? 'Sign up successful' : 'Sign up failed'),
+        className: 'bg-green-500 text-white', 
       });
       
-      router.push(`/verify/${username}`);
+      if (response.data.success) {
+        router.push(`/verify/${username}`);
+      }
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -99,7 +106,7 @@ const SignUpPage = () => {
       toast({
         title: 'Sign-up failed',
         description: errorMessage,
-        variant: "destructive",
+        className: 'bg-red-500 text-white', 
       });
     } finally {
       setIsSubmitting(false);
@@ -108,15 +115,12 @@ const SignUpPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-[#1a1f2e] to-black relative overflow-hidden">
-      {/* Grid Background */}
       <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10 pointer-events-none" />
       
-      {/* Decorative Gradient Orbs */}
       <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-[#00000033] rounded-full blur-3xl" />
 
-      {/* Back Button */}
-      <div className="absolute top-8 left-8 z-20">
+      <div className="absolute top-8 left-8 z-50">
         <Button
           variant="ghost"
           className="text-gray-400 hover:text-white hover:bg-white/10"
@@ -143,7 +147,6 @@ const SignUpPage = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <CardContent className="space-y-6">
-              {/* Username Field */}
               <FormField
                 name="username"
                 control={form.control}
@@ -179,7 +182,6 @@ const SignUpPage = () => {
                 )}
               />
 
-              {/* Email Field */}
               <FormField
                 name="email"
                 control={form.control}
@@ -216,7 +218,6 @@ const SignUpPage = () => {
                 )}
               />
 
-              {/* Password Field */}
               <FormField
                 name="password"
                 control={form.control}
@@ -228,9 +229,21 @@ const SignUpPage = () => {
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                         <Input
                           {...field}
-                          type="password"
-                          className="pl-10 bg-white/10 border-white/10 text-white focus:ring-blue-500 focus:border-blue-500 rounded-xl h-12"
+                          type={showPassword ? "text" : "password"}
+                          className="pl-10 pr-10 bg-white/10 border-white/10 text-white focus:ring-blue-500 focus:border-blue-500 rounded-xl h-12"
                         />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={togglePasswordVisibility}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white hover:bg-transparent"
+                        >
+                          {showPassword ? 
+                            <EyeOff className="h-5 w-5" /> : 
+                            <Eye className="h-5 w-5" />
+                          }
+                        </Button>
                       </div>
                     </FormControl>
                     <FormMessage />
