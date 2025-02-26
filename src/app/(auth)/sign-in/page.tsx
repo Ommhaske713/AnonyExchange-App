@@ -21,16 +21,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 export default function SignIn() {
   const router = useRouter();
   const { toast } = useToast();
+  const pathname = usePathname();
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleBackToHome = (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      router.push('/');
-    } catch (error) {
-      window.location.href = '/';
-    }
-  };
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -79,18 +71,23 @@ export default function SignIn() {
         toast({
           title: 'Login Failed',
           description: 'Incorrect username or password',
-          variant: 'destructive',
+          className: 'bg-red-500 text-white', 
         });
       } else {
         toast({
           title: 'Error',
           description: result.error,
-          variant: 'destructive',
+          className: 'bg-red-500 text-white', 
         });
       }
     }
 
     if (result?.url) {
+      toast({
+        title: 'Success',
+        description: 'Logged in successfully',
+        className: 'bg-green-500 text-white', 
+      });
       router.replace('/dashboard');
     }
   };
@@ -101,30 +98,25 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-[#1a1f2e] to-black relative overflow-hidden">
-      {/* Grid Background */}
+
       <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10 pointer-events-none" />
-      
-      {/* Decorative Gradient Orbs */}
+
       <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-blue-500/20 rounded-full blur-3xl" />
+      
       <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-[#00000033] rounded-full blur-3xl" />
 
-      {/* Back Button */}
-      <div className="absolute top-8 left-8 z-20">
-        <Link 
-          href="/"
-          onClick={handleBackToHome}
-          className="inline-block"
-        >
-          <Button
-            variant="ghost"
-            className="text-gray-400 hover:text-white hover:bg-white/10"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
-        </Link>
-      </div>
 
+      <div className="absolute top-8 left-8 z-50">
+        <Button
+          variant="ghost"
+          className="text-gray-400 hover:text-white hover:bg-white/10"
+          onClick={() => router.push('/')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+      
       <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl relative z-10">
         <CardHeader className="space-y-4 text-center">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mb-2">
@@ -165,11 +157,10 @@ export default function SignIn() {
               )}
               {identifierMessage && (
                 <p
-                  className={`text-sm ${
-                    identifierMessage === 'User exist with this username/email.'
-                      ? 'text-green-500'
-                      : 'text-red-500'
-                  }`}
+                  className={`text-sm ${identifierMessage === 'User exist with this username/email.'
+                    ? 'text-green-500'
+                    : 'text-red-500'
+                    }`}
                 >
                   {identifierMessage}
                 </p>
@@ -181,7 +172,6 @@ export default function SignIn() {
               )}
             </div>
 
-            {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-300">
                 Password
@@ -202,8 +192,8 @@ export default function SignIn() {
                   onClick={togglePasswordVisibility}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white hover:bg-transparent"
                 >
-                  {showPassword ? 
-                    <EyeOff className="h-5 w-5" /> : 
+                  {showPassword ?
+                    <EyeOff className="h-5 w-5" /> :
                     <Eye className="h-5 w-5" />
                   }
                 </Button>
@@ -215,7 +205,6 @@ export default function SignIn() {
               )}
             </div>
 
-            {/* Remember & Forgot */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox id="remember" className="data-[state=checked]:bg-blue-500 border-white/20" />
