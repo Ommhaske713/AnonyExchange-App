@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Message } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 import axios, { AxiosError } from 'axios';
-import { Loader2, RefreshCcw, Settings, MessageCircle, Copy, Link as LinkIcon } from 'lucide-react';
+import { Loader2, RefreshCcw, Settings, MessageCircle, Copy, Link as LinkIcon, Inbox, CheckCircle2 } from 'lucide-react';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -16,6 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AcceptMessageSchema } from '@/schema/acceptMessageSchema';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -23,7 +25,8 @@ function UserDashboard() {
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const { toast } = useToast();
   const { data: session } = useSession();
-
+  const [replyingMessageId, setReplyingMessageId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("all");
   const form = useForm({
     resolver: zodResolver(AcceptMessageSchema),
   });
@@ -31,8 +34,52 @@ function UserDashboard() {
   const { register, watch, setValue } = form;
   const acceptMessages = watch('acceptMessages');
 
+  const answeredCount = messages.filter(msg => !!msg.reply).length;
+  const pendingCount = messages.filter(msg => !msg.reply).length;
+
+  const filteredMessages = React.useMemo(() => {
+    if (activeTab === "answered") {
+      return messages.filter(msg => !!msg.reply);
+    } else if (activeTab === "pending") {
+      return messages.filter(msg => !msg.reply);
+    }
+    return messages;
+  }, [messages, activeTab]);
+
+  const sortedMessages = React.useMemo(() => {
+    return [...filteredMessages].sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+      const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [filteredMessages]);
+
+  const handleReplyToggle = (messageId: string) => {
+    setReplyingMessageId(currentId => {
+      if (currentId === messageId) {
+        return null;
+      }
+      return messageId;
+    });
+  };
+
+  const handleMessageReply = async () => {
+    await fetchMessages();
+    setReplyingMessageId(null);
+    toast({
+      title: 'Reply Sent',
+      description: 'Your message was successfully sent',
+      className: 'bg-green-500 text-white',
+    });
+  };
+
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
+    toast({
+      title: 'Message Deleted',
+      description: 'The message has been removed',
+      variant: 'default',
+    });
   };
 
   const fetchAcceptMessages = useCallback(async () => {
@@ -46,6 +93,7 @@ function UserDashboard() {
         title: 'Error',
         description: axiosError.response?.data.message ?? 'Failed to fetch message settings',
         variant: 'destructive',
+        className: 'bg-red-500 text-white',
       });
     } finally {
       setIsSwitchLoading(false);
@@ -70,6 +118,7 @@ function UserDashboard() {
         title: 'Error',
         description: axiosError.response?.data.message ?? 'Failed to fetch messages',
         variant: 'destructive',
+        className: 'bg-red-500 text-white',
       });
     } finally {
       setIsLoading(false);
@@ -91,6 +140,7 @@ function UserDashboard() {
       toast({
         title: response.data.message,
         variant: 'default',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -98,6 +148,7 @@ function UserDashboard() {
         title: 'Error',
         description: axiosError.response?.data.message ?? 'Failed to update message settings',
         variant: 'destructive',
+        className: 'bg-red-500 text-white',
       });
     }
   };
@@ -206,40 +257,121 @@ function UserDashboard() {
             <Button
               onClick={() => fetchMessages(true)}
               className="px-4 py-2 border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white rounded-xl flex items-center gap-2 transition-colors"
+              disabled={isLoading}
             >
               {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-              <>
-                <RefreshCcw className="h-4 w-4" />
-                Refresh
-              </>
+                <>
+                  <RefreshCcw className="h-4 w-4" />
+                  Refresh
+                </>
               )}
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {messages.length > 0 ? (
-              messages.map((message) => (
-                <MessageCard
-                  key={message._id}
-                  message={message}
-                  onMessageDelete={handleDeleteMessage}
-                />
-              ))
-            ) : (
-              <div className="col-span-full p-8 text-center bg-black/20 border border-white/5 rounded-xl">
-                <p className="text-white font-medium">No messages yet</p>
-                <p className="text-sm text-slate-400 mt-1">
-                  Share your profile link to start receiving messages
-                </p>
-              </div>
-            )}
-          </div>
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-3 mb-6 bg-slate-800/50 p-1 rounded-lg">
+              <TabsTrigger 
+                value="all" 
+                className="data-[state=inactive]:bg-slate-700 text-white rounded-md"
+              >
+                All Messages
+                <Badge className="ml-2 bg-blue-500/20 text-blue-500">{messages.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="answered" 
+                className="data-[state=inactive]:bg-slate-700 rounded-md"
+              >
+                <CheckCircle2 className="h-4 w-4 mr-1" />
+                Answered
+                <Badge className="ml-2 bg-green-500/20 text-green-500">{answeredCount}</Badge>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="pending" 
+                className="data-[state=inactive]:bg-slate-700 rounded-md"
+              >
+                <Inbox className="h-4 w-4 mr-1" />
+                Pending
+                <Badge className="ml-2 bg-amber-500/20 text-amber-400">{pendingCount}</Badge>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="mt-0">
+              {renderMessageList(sortedMessages)}
+            </TabsContent>
+            
+            <TabsContent value="answered" className="mt-0">
+              {renderMessageList(sortedMessages)}
+            </TabsContent>
+            
+            <TabsContent value="pending" className="mt-0">
+              {renderMessageList(sortedMessages)}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
   );
+
+  function renderMessageList(messages: Message[]) {
+    if (messages.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-900 rounded-lg">
+          <h3 className="text-xl font-semibold text-gray-300 mb-2">
+            {activeTab === "all"
+              ? "No messages yet"
+              : activeTab === "answered"
+                ? "No answered messages yet"
+                : "No pending messages yet"
+            }
+          </h3>
+          <p className="text-gray-400">
+            {activeTab === "all"
+              ? "Share your profile link to start receiving messages"
+              : activeTab === "answered"
+                ? "Reply to messages to see them here"
+                : "All messages have been answered"
+            }
+          </p>
+        </div>
+      );
+    }
+  
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {messages.map((message) => (
+            <div 
+              key={message._id} 
+              className={cn(
+                "p-4 border border-gray-700 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200",
+                replyingMessageId === message._id 
+                  ? "border-2 border-indigo-500 shadow-lg shadow-indigo-500/20" 
+                  : message.reply
+                    ? "bg-gradient-to-br from-slate-800/80 to-indigo-900/30 border border-indigo-500/30"
+                    : "bg-gradient-to-br from-slate-800/80 to-indigo-900/30 border border-indigo-500/30",
+                replyingMessageId !== null && replyingMessageId !== message._id && "opacity-50"
+              )}
+            >
+              <div className={cn(
+                "absolute top-0 left-0 h-0 w-full",
+                message.reply 
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-600" 
+                  : "bg-gradient-to-r from-blue-500 to-indigo-600"
+              )} />
+              
+              <MessageCard
+                message={message}
+                onMessageDelete={handleDeleteMessage}
+                isReplying={replyingMessageId === message._id}
+                onReplyToggle={() => handleReplyToggle(message._id)}
+                onMessageReply={handleMessageReply}
+              />
+            </div>
+          ))}
+        </div>
+      );
+  }
 }
 
 export default UserDashboard;
