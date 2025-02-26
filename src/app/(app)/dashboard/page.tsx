@@ -59,9 +59,9 @@ function UserDashboard() {
       setMessages(response.data.messages || []);
       if (refresh) {
         toast({
-          title: 'Refreshed Messages',
+          title: 'Messages Refreshed',
           description: 'Showing latest messages',
-          variant: 'default'
+          className: 'bg-green-500 text-white',
         });
       }
     } catch (error) {
@@ -113,13 +113,13 @@ function UserDashboard() {
     toast({
       title: 'URL Copied!',
       description: 'Profile URL has been copied to clipboard.',
+      className: 'bg-green-500 text-white',
     });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-16 pb-12 px-4">
       <div className="max-w-7xl mx-auto space-y-6 mt-8">
-        {/* Welcome Section */}
         <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10" />
           <h1 className="text-4xl font-bold text-white mb-2">
@@ -128,7 +128,6 @@ function UserDashboard() {
           <p className="text-slate-300">Manage your feedback and interactions in one place</p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid md:grid-cols-3 gap-6">
           <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
             <div className="flex items-center gap-4">
@@ -142,7 +141,6 @@ function UserDashboard() {
             </div>
           </div>
 
-          {/* Profile URL Card */}
           <div className="col-span-2 bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -171,7 +169,6 @@ function UserDashboard() {
           </div>
         </div>
 
-        {/* Message Settings */}
         <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -198,7 +195,6 @@ function UserDashboard() {
           </div>
         </div>
 
-        {/* Messages Section */}
         <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -209,15 +205,15 @@ function UserDashboard() {
             </div>
             <Button
               onClick={() => fetchMessages(true)}
-              className="px-4 py-2 border border-slate-700 bg-slate-800 hover:bg-white hover:text-black text-white rounded-xl flex items-center gap-2 transition-colors outline"
+              className="px-4 py-2 border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white rounded-xl flex items-center gap-2 transition-colors"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <>
-                  <RefreshCcw className="h-4 w-4" />
-                  Refresh
-                </>
+              <>
+                <RefreshCcw className="h-4 w-4" />
+                Refresh
+              </>
               )}
             </Button>
           </div>
