@@ -16,6 +16,8 @@ const NavbarSwitcher = () => {
   const isVerify = pathname.startsWith('/verify');
   const isOnProfile = pathname.startsWith('/profile');
   const IsSendMessage = pathname.startsWith('/u');
+  const isQuestion = pathname.startsWith('/questions');
+
 
   
   const isHome = pathname === '/';
@@ -41,7 +43,11 @@ const NavbarSwitcher = () => {
   }
 
   if (IsSendMessage) {
-    return <HomeNavbar />;
+    return null;
+  }
+
+  if(isQuestion){
+    return null;
   }
 
   return isDashboard ? <DashboardNavbar /> : <Navbar />;
