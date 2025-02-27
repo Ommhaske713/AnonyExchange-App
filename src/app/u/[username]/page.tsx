@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Loader2, MessageSquare, Send, Sparkles, RefreshCw, MousePointerClick } from 'lucide-react';
+import { Loader2, MessageSquare, Send, Sparkles, RefreshCw, MousePointerClick, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
 import { useCompletion } from 'ai/react';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import * as z from 'zod';
@@ -16,13 +17,14 @@ import { ApiResponse } from '@/types/ApiResponse';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schema/messageSchema';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const specialChar = '||';
-const parseStringMessages = (messageString: string): string[] => 
+const parseStringMessages = (messageString: string): string[] =>
   messageString?.split(specialChar).filter((msg) => msg.trim() !== '') || [];
 
 const initialMessageString =
-  "What's your favorite movie?||Do you have any pets?||What's your dream job?";
+  "If you could master any skill overnight, what would you choose and why?||What's something you think is completely overrated that most people love?||What's the weirdest food combination you enjoy that others find disgusting?";
 
 export default function SendMessage() {
   const { username } = useParams<{ username: string }>();
@@ -50,7 +52,6 @@ export default function SendMessage() {
     defaultValues: { content: '' },
   });
 
-  
   useEffect(() => {
     const subscription = form.watch((value) => {
       if (value.content) {
@@ -79,7 +80,7 @@ export default function SendMessage() {
       console.error("Error fetching messages:", error);
       setIsSuggestError(true);
     }
-  };  
+  };
 
   const handleMessageClick = (message: string) => {
     form.setValue('content', message, { shouldValidate: true });
@@ -91,7 +92,12 @@ export default function SendMessage() {
     try {
       const { data: response } = await axios.post<ApiResponse>('/api/send-message', { ...data, username });
 
-      toast({ title: 'Success!', description: response.message, variant: 'default' });
+      toast({ 
+        title: 'Success!',
+        description: response.message,
+        variant: 'default' ,
+        className: 'bg-green-500 text-white',
+      });
       form.reset();
       setCharCount(0);
       setIsSubmitSuccessful(true);
@@ -103,6 +109,7 @@ export default function SendMessage() {
         title: 'Error',
         description: axiosError.response?.data.message || 'Failed to send message',
         variant: 'destructive',
+        className: 'bg-red-500 text-white',
       });
     } finally {
       setIsLoading(false);
@@ -111,7 +118,7 @@ export default function SendMessage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 py-12 px-4">
-      <div className="max-w-3xl mx-auto space-y-8 mt-14">
+      <div className="max-w-3xl mx-auto space-y-8 mt-5">
         <div className="text-center space-y-3">
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
             Send Anonymous Message
@@ -119,6 +126,17 @@ export default function SendMessage() {
           <p className="text-slate-300">
             Your message will be delivered anonymously to <span className="font-medium text-blue-300">@{username}</span>
           </p>
+          <div className="pt-2">
+            <Link href="/questions">
+              <Button
+                variant="ghost"
+                className="text-slate-300 hover:text-white hover:bg-slate-700/50 flex items-center gap-2 mx-auto"
+              >
+                <History className="h-4 w-4" />
+                View Q&A History
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -130,7 +148,7 @@ export default function SendMessage() {
               onClick={fetchSuggestedMessages}
               variant="outline"
               size="sm"
-              className="text-slate-200 hover:bg-slate-700/50 hover:text-white border-slate-600 flex items-center gap-2"
+              className="text-slate-200 bg-slate-700/50 hover:text-slate-700 border-slate-600 flex items-center gap-2"
               disabled={isSuggestLoading}
             >
               <RefreshCw className={cn("h-4 w-4", isSuggestLoading && "animate-spin")} />
@@ -143,8 +161,8 @@ export default function SendMessage() {
           ) : (
             <div className="grid grid-cols-1 gap-3">
               {suggestedMessages.map((message, index) => (
-                <Card 
-                  key={index} 
+                <Card
+                  key={index}
                   className="bg-slate-700/30 hover:bg-slate-700/50 border-slate-600 transition-all duration-200 cursor-pointer group overflow-hidden relative"
                   onClick={() => handleMessageClick(message)}
                 >
@@ -166,7 +184,7 @@ export default function SendMessage() {
           <CardHeader className="pb-2 pt-6 px-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-blue-400" /> 
+                <MessageSquare className="h-5 w-5 text-blue-400" />
                 Your Message
               </h2>
               <span className={cn(
@@ -200,7 +218,7 @@ export default function SendMessage() {
                     <FormMessage className="text-red-400 mt-2" />
                   </FormItem>
                 )} />
-                
+
                 <div className="flex justify-between items-center">
                   <p className="text-slate-400 text-sm italic">Express yourself freely, your identity is protected.</p>
                   <Button
@@ -208,8 +226,8 @@ export default function SendMessage() {
                     disabled={isLoading || !form.watch('content') || charCount > MAX_CHARS}
                     className={cn(
                       "relative overflow-hidden transition-all duration-300 px-6 py-2.5 text-base font-medium",
-                      isSubmitSuccessful 
-                        ? "bg-green-500 hover:bg-green-600" 
+                      isSubmitSuccessful
+                        ? "bg-green-500 hover:bg-green-600"
                         : "bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 shadow-lg hover:shadow-indigo-500/30"
                     )}
                   >
@@ -223,10 +241,28 @@ export default function SendMessage() {
         </Card>
 
         <div className="text-center mt-6">
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-400 text-sm mb-2">
             Need more ideas? Click the "New Ideas" button to get fresh suggestions.
           </p>
+          <p className="text-slate-400 text-sm">
+            New here? <Link href="/" className="text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-2">
+              Try this app
+            </Link> by going to the homepage first and setting up your account.
+          </p>
         </div>
+
+        <footer className="mt-14">
+          <Separator className="bg-slate-700/50 my-4" />
+          <div className="flex justify-between items-center px-2">
+            <p className="text-slate-500 text-xs">
+              © 2025 Anonymous Q&A
+            </p>
+            <p className="text-slate-500 text-xs flex items-center">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 mr-2"></span>
+              End-to-end encrypted
+            </p>
+          </div>
+        </footer>
       </div>
     </main>
   );
