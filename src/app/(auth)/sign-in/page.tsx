@@ -84,11 +84,13 @@ export default function SignIn() {
 
     if (result?.url) {
       toast({
-        title: 'Success',
-        description: 'Logged in successfully',
-        className: 'bg-green-500 text-white', 
+      title: 'Success',
+      description: 'Logged in successfully',
+      className: 'bg-green-500 text-white', 
       });
+      setTimeout(() => {
       router.replace('/dashboard');
+      }, 1500); 
     }
   };
 
