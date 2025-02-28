@@ -90,6 +90,7 @@ const getInitials = (username: string): string => {
   return (
     <main className="min-h-screen pt-16 pb-16 bg-gradient-to-b from-slate-900 to-black text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Top Banner Section */}
         <div className="relative rounded-2xl overflow-hidden mb-8">
           <div className="h-64 bg-gradient-to-r from-indigo-800 via-purple-700 to-blue-800 relative overflow-hidden">
             <div className="absolute inset-0 opacity-20 mix-blend-overlay"></div>
@@ -104,7 +105,8 @@ const getInitials = (username: string): string => {
               }}
             ></div>
           </div>
-
+          
+          {/* Profile Header */}
           <div className="absolute -bottom-16 w-full px-8 mb-[137px]">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div className="flex items-end gap-6">
@@ -152,7 +154,8 @@ const getInitials = (username: string): string => {
             </div>
           </div>
         </div>
-
+        
+        {/* Stats Bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 mt-20">
           <Card className="bg-white/5 border-white/10 backdrop-blur-xl overflow-hidden hover:bg-white/8 transition-all duration-300">
             <CardContent className="p-6 flex items-center gap-4">
@@ -214,6 +217,7 @@ const getInitials = (username: string): string => {
           </div>
           
           <TabsContent value="overview" className="mt-0 space-y-8">
+            {/* Personal Info Card */}
             <Card className="bg-white/5 border-white/10 backdrop-blur-xl overflow-hidden">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -275,6 +279,7 @@ const getInitials = (username: string): string => {
               </CardContent>
             </Card>
 
+            {/* Analytics Card */}
             <Card className="bg-white/5 border-white/10 backdrop-blur-xl overflow-hidden">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg text-white flex items-center gap-2">
