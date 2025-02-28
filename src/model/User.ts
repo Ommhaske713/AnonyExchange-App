@@ -4,6 +4,9 @@ export interface Message extends Document {
   content: string;
   createdAt: Date;
   _id: string;
+  reply?: string;
+  repliedAt?: Date;
+  username?: string;
 }
 
 const MessageSchema: Schema<Message> = new mongoose.Schema({
@@ -16,19 +19,28 @@ const MessageSchema: Schema<Message> = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  reply: {
+    type: String,
+    default: null
+  },
+  repliedAt: {
+    type: Date,
+    default: null
+  }
 });
 
 export interface User extends Document {
   username: string;
   email: string;
   password: string;
-  verifyCode?: string; 
-  verifyCodeExpiry?: Date; 
+  verifyCode?: string; // Make optional
+  verifyCodeExpiry?: Date; // Make optional
   isVerified: boolean;
   isAcceptingMessages: boolean;
   messages: Message[];
 }
 
+// Updated User schema
 const UserSchema: Schema<User> = new mongoose.Schema({
   username: {
     type: String,
@@ -62,7 +74,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  messages: [MessageSchema],
+  messages: [MessageSchema]
 });
 
 const UserModel =
