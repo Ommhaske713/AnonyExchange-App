@@ -106,7 +106,7 @@ const SignUpPage = () => {
       toast({
         title: 'Sign-up failed',
         description: errorMessage,
-        className: 'bg-red-500 text-white', 
+        className: 'bg-red-500 text-white',
       });
     } finally {
       setIsSubmitting(false);
