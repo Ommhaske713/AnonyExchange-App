@@ -1,10 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './HomeNavbar.module.css';
+import { usePathname } from 'next/navigation';
 
 function HomeNavbar() {
+  const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    // Check if we're on mobile
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px is standard md breakpoint
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Listen for resize events
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+  
+  // Don't render the navbar on mobile
+  if (isMobile) return null;
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center p-4">
       <nav className={styles.nav}>
@@ -14,9 +37,21 @@ function HomeNavbar() {
         <Link href="#about" className={styles.link}>
           About
         </Link>
-        <Link href="/sign-in" className={styles.link}>
-          Login
-        </Link>
+        
+        {pathname === '/sign-in' ? (
+          <Link href="/sign-up" className={styles.link}>
+            Sign Up
+          </Link>
+        ) : pathname === '/sign-up' ? (
+          <Link href="/sign-in" className={styles.link}>
+            Sign In
+          </Link>
+        ) : (
+          <Link href="/sign-in" className={styles.link}>
+            Login
+          </Link>
+        )}
+        
         <Link href="#contact" className={styles.link}>
           Contact
         </Link>
