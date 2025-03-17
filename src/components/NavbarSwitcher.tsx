@@ -17,13 +17,13 @@ const NavbarSwitcher = () => {
   const isOnProfile = pathname.startsWith('/profile');
   const IsSendMessage = pathname.startsWith('/u');
   const isQuestion = pathname.startsWith('/questions');
-
-
+  const isOnSettings = pathname.startsWith('/settings');
+ 
   
   const isHome = pathname === '/';
 
   if (isHome) {
-    return <HomeNavbar />;
+    return null;
   }
 
   if (isSignin) {
@@ -39,6 +39,10 @@ const NavbarSwitcher = () => {
   }
 
   if (isOnProfile) {
+    return null;
+  }
+
+  if (isOnSettings) {
     return null;
   }
 
