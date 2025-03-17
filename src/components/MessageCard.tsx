@@ -55,6 +55,7 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
     }
   };
 
+  // Update the handleReply function
   const handleReply = async () => {
     if (!reply.trim()) return;
 
@@ -69,8 +70,8 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
         description: response.data.message,
       });
 
-      setReply(''); 
-      onMessageReply(); 
+      setReply(''); // Clear reply input
+      onMessageReply(); // Notify parent to refresh messages
     } catch (error) {
       const axiosError = error as AxiosError;
       toast({
@@ -109,7 +110,7 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2" onClick={stopPropagation}>
+          <div className="flex items-center gap-1 sm:gap-2" onClick={stopPropagation}>
             {!isReplying && (
               <Button
                 variant="ghost"
@@ -118,9 +119,9 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
                   e.stopPropagation();
                   onReplyToggle();
                 }}
-                className="opacity-0 group-hover:opacity-100 p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all duration-300"
+                className="opacity-100 md:opacity-0 group-hover:opacity-100 p-1 sm:p-2 h-10 w-10 sm:h-auto sm:w-auto rounded-full sm:rounded-md text-blue-600 hover:text-blue-700 hover:bg-blue-200 bg-blue-50 sm:bg-transparent transition-all duration-500"
               >
-                <Reply className="h-5 w-5" />
+                <Reply className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             )}
             <AlertDialog>
@@ -128,9 +129,9 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="opacity-0 group-hover:opacity-100 p-2 text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
+                  className="opacity-100 md:opacity-0 group-hover:opacity-100 p-1 sm:p-2 h-10 w-10 sm:h-auto sm:w-auto rounded-full sm:rounded-md text-red-600 hover:text-red-700 bg-red-50 sm:bg-transparent hover:bg-red-50 transition-all duration-300"
                 >
-                  <Trash2 className="h-5 w-5" />
+                  <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="bg-white/10 backdrop-blur-lg border border-white/10">
@@ -158,6 +159,7 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
       </CardHeader>
 
       <CardContent className="p-0">
+        {/* Reply section */}
         {message.reply ? (
           <div className="mt-4 border-t border-white/10 pt-4">
             <div className="bg-blue-50 rounded-lg p-4">
