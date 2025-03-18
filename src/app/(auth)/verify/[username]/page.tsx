@@ -95,7 +95,7 @@ export default function VerifyAccount() {
         });
 
         setTimeout(() => {
-          router.replace('/dashboard'); 
+          router.replace('/dashboard');
         }, 1500);
       } else {
         throw new Error(response.data.message || 'Verification failed');
