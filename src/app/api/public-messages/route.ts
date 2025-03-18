@@ -14,9 +14,10 @@ export async function GET(request: Request) {
     const session = await getServerSession(authOptions);
 
     let user;
+    let isOwnProfile = false;
     
     if (usernameParam) {
-      user = await UserModel.findOne({ username: usernameParam }).select("messages username");
+      user = await UserModel.findOne({ username: usernameParam }).select("messages username showQuestions");
       
       if (!user) {
         return NextResponse.json(
@@ -24,12 +25,25 @@ export async function GET(request: Request) {
           { status: 404 }
         );
       }
+
+      if (session?.user?.email) {
+        const currentUser = await UserModel.findOne({ email: session.user.email }).select("username");
+        isOwnProfile = currentUser?.username === user.username;
+      }
     } else if (session?.user?.email) {
-      user = await UserModel.findOne({ email: session.user.email }).select("messages username");
+      user = await UserModel.findOne({ email: session.user.email }).select("messages username showQuestions");
+      isOwnProfile = true;
     } else {
       return NextResponse.json(
         { success: false, message: "Please provide a username or login" },
         { status: 400 }
+      );
+    }
+
+    if (!isOwnProfile && user && user.showQuestions === false) {
+      return NextResponse.json(
+        { success: false, message: "This user has disabled question viewing visibility" },
+        { status: 403 }
       );
     }
 
