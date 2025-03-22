@@ -86,3 +86,27 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.input-animated:focus {
+  @apply ring-2 ring-blue-500/50 transition-all duration-300 scale-[1.01];
+}
+
+.float {
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
