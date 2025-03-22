@@ -39,8 +39,8 @@ export function MessagesContainer() {
   };
 
   const handleMessageReply = () => {
-    fetchMessages(); // Refresh messages after reply
-    setReplyingMessageId(null); // Close reply section
+    fetchMessages(); 
+    setReplyingMessageId(null);
   };
 
   return (
