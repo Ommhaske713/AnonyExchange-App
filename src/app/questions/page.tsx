@@ -378,7 +378,7 @@ function QuestionsContent() {
 
           {!isLoading && error && (
             <div className={cn(
-              "p-20 text-center border rounded-xl max-w-lg mx-auto h-80",
+              "p-6 sm:p-10 md:p-20 text-center border rounded-xl max-w-lg mx-auto min-h-[16rem] h-auto md:h-80",
               isQuestionsDisabled 
                 ? "bg-amber-900/20 border-amber-500/20" 
                 : "bg-red-900/20 border-red-500/20"
@@ -386,22 +386,22 @@ function QuestionsContent() {
               <div className="flex flex-col items-center justify-center h-full">
                 {isQuestionsDisabled ? (
                   <>
-                    <Lock className="h-16 w-16 text-amber-500 mb-6" />
-                    <h3 className="text-xl font-medium text-amber-300 mb-3">Questions Not Available</h3>
+                    <Lock className="h-12 w-12 sm:h-16 sm:w-16 text-amber-500 mb-4 sm:mb-6" />
+                    <h3 className="text-lg sm:text-xl font-medium text-amber-300 mb-2 sm:mb-3">Questions Not Available</h3>
                   </>
                 ) : (
-                  <MessageCircle className="h-16 w-16 text-red-400 mb-6" />
+                  <MessageCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-400 mb-4 sm:mb-6" />
                 )}
                 <p className={cn(
-                  "font-medium mb-6",
+                  "font-medium mb-4 sm:mb-6 text-sm sm:text-base px-2",
                   isQuestionsDisabled ? "text-amber-300" : "text-red-300"
                 )}>
                   {error}
                 </p>
                 
                 {isQuestionsDisabled && usernameParam ? (
-                  <div className="space-y-4">
-                    <p className="text-sm text-amber-400/70">
+                  <div className="space-y-3 sm:space-y-4 w-full px-2">
+                    <p className="text-xs sm:text-sm text-amber-400/70">
                       Try searching for another user who has enabled public questions.
                     </p>
                     <Button
@@ -424,7 +424,7 @@ function QuestionsContent() {
                   <Button
                     variant="outline"
                     className={cn(
-                      "mt-4",
+                      "mt-2 sm:mt-4",
                       isQuestionsDisabled 
                         ? "border-amber-500/30 text-amber-300 hover:bg-amber-500/10" 
                         : "border-red-500/30 text-red-300 hover:bg-red-500/10"
@@ -452,12 +452,12 @@ function QuestionsContent() {
           )}
 
           {!isLoading && !error && messages.length === 0 && (usernameParam || status === 'authenticated') && (
-            <div className="p-24 text-center bg-slate-800/50 border border-slate-700/50 rounded-xl max-w-lg mx-auto">
-              <MessageCircle className="h-12 w-12 mx-auto text-slate-500 mb-4" />
-              <p className="text-white font-medium">
+            <div className="p-6 sm:p-12 md:p-20 text-center bg-slate-800/50 border border-slate-700/50 rounded-xl max-w-lg mx-auto">
+              <MessageCircle className="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-slate-500 mb-4" />
+              <p className="text-white font-medium text-sm sm:text-base px-2">
                 {usernameParam ? `@${usernameParam} has no messages yet` : "You haven't received any messages yet"}
               </p>
-              <p className="text-sm text-slate-400 mt-2 mb-6">
+              <p className="text-xs sm:text-sm text-slate-400 mt-2 mb-4 sm:mb-6 px-1">
                 {usernameParam ?
                   `When someone sends them a message and they reply, it will appear here` :
                   `Share your profile to start receiving messages`
@@ -465,8 +465,8 @@ function QuestionsContent() {
               </p>
 
               {usernameParam && (
-                <div className="border-t border-slate-700/50 pt-6">
-                  <p className="text-sm text-blue-300 mb-4">Try searching for another user</p>
+                <div className="border-t border-slate-700/50 pt-4 sm:pt-6">
+                  <p className="text-xs sm:text-sm text-blue-300 mb-3 sm:mb-4">Try searching for another user</p>
                   <div className="flex justify-center">
                     <Button
                       variant="outline"
