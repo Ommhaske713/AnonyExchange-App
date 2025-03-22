@@ -4,6 +4,8 @@ import './globals.css'
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "@/components/ui/toaster"
 import NavbarSwitcher from "@/components/NavbarSwitcher";
+import { NotificationIndicator } from '@/components/layout/NotificationIndicator';
+import { NotificationProvider } from '@/context/NotificationContext'; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,9 +31,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          <NavbarSwitcher />
-          {children}
-          <Toaster />
+          <NotificationProvider> 
+            <div className="relative">
+              <NavbarSwitcher />
+              <div className="absolute top-4 right-16 z-50">
+                <NotificationIndicator />
+              </div>
+            </div>
+            {children}
+            <Toaster />
+          </NotificationProvider> 
         </AuthProvider>
       </body>
     </html>
