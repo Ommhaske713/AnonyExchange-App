@@ -24,13 +24,6 @@ AnonyExchange is a modern, secure platform for anonymous communication. It enabl
 - **Content Moderation** - AI moderation to filter inappropriate content
 - **Notification Controls** - Manage sound alerts and notification preferences
 
-## 📱 Screenshots
-
-<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-  <img src="https://placeholder-for-screenshot1.com" width="45%" alt="Dashboard View">
-  <img src="https://placeholder-for-screenshot2.com" width="45%" alt="Anonymous Message Form">
-</div>
-
 ## 🚀 Getting Started
 
 First, run the development server:
