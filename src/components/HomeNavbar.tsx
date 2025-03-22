@@ -10,22 +10,17 @@ function HomeNavbar() {
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
-    // Check if we're on mobile
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is standard md breakpoint
+      setIsMobile(window.innerWidth < 768); 
     };
-    
-    // Initial check
+
     checkIfMobile();
-    
-    // Listen for resize events
+
     window.addEventListener('resize', checkIfMobile);
-    
-    // Clean up
+
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
-  
-  // Don't render the navbar on mobile
+
   if (isMobile) return null;
   
   return (
