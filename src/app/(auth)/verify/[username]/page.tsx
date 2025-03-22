@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import * as z from 'zod';
 import { ArrowLeft, Shield, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { signIn } from 'next-auth/react';
 import {
   Form,
   FormField,
@@ -24,11 +25,13 @@ import type { ApiResponse } from '@/types/ApiResponse';
 export default function VerifyAccount() {
   const router = useRouter();
   const params = useParams<{ username: string }>();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [password, setPassword] = useState('');
 
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
@@ -38,13 +41,18 @@ export default function VerifyAccount() {
   });
 
   useEffect(() => {
+    const passParam = searchParams.get('password');
+    if (passParam) {
+      setPassword(decodeURIComponent(passParam));
+    }
+    
     if (countdown > 0 && !canResend) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else if (countdown === 0 && !canResend) {
       setCanResend(true);
     }
-  }, [countdown, canResend]);
+  }, [countdown, canResend, searchParams]);
 
   const handleResendCode = async () => {
     if (isResending || !canResend) return;
@@ -94,9 +102,35 @@ export default function VerifyAccount() {
           className: 'bg-green-500 text-white',
         });
 
-        setTimeout(() => {
-          router.replace('/dashboard');
-        }, 1500);
+        if (password) {
+          console.log('Attempting auto-login with saved password');
+          try {
+            console.log('Using identifier:', params.username);
+
+            const result = await signIn('credentials', {
+              identifier: params.username,
+              password: password,
+              redirect: false
+            });
+            
+            console.log('Sign-in result:', result);
+            
+            if (result?.ok) {
+              console.log('Sign-in successful, redirecting to dashboard');
+              router.push('/dashboard');
+            } else {
+              console.error('Sign-in failed with error:', result?.error);
+              setTimeout(() => {
+                router.replace(`/sign-in?verified=true&username=${encodeURIComponent(params.username)}`);
+              }, 100);
+            }
+          } catch (error) {
+            console.error('Auto sign-in threw exception:', error);
+            router.replace(`/sign-in?verified=true&username=${encodeURIComponent(params.username)}`);
+          }
+        } else {
+          router.replace(`/sign-in?verified=true&username=${encodeURIComponent(params.username)}`);
+        }
       } else {
         throw new Error(response.data.message || 'Verification failed');
       }
@@ -105,7 +139,7 @@ export default function VerifyAccount() {
 
       const axiosError = error as AxiosError<ApiResponse>;
       const errorMessage = axiosError.response?.data.message 
-        || (axiosError instanceof Error ? axiosError.message : 'Verification failed');
+        || (error instanceof Error ? error.message : 'Verification failed');
 
       toast({
         title: 'Verification Failed',
@@ -212,6 +246,10 @@ export default function VerifyAccount() {
                   'Resend Code'
                 )}
               </Button>
+              
+              <p className="text-gray-400 text-xs text-center italic mt-2">
+                If you haven't received the code, please check your spam mails.
+              </p>
             </CardFooter>
           </form>
         </Form>
