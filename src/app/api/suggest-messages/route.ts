@@ -2,10 +2,22 @@ export const runtime = 'edge';
 
 export async function POST(req: Request) {
   try {
-    const questions = generateQuestions();
+    let seed: number;
+    try {
+      const body = await req.json();
+      seed = body.seed || Date.now();
+    } catch (e) {
+      seed = Date.now();
+    }
+
+    const questions = generateQuestions(seed);
 
     return new Response(
-      JSON.stringify({ text: questions, message: 'Message generated successfully' }),
+      JSON.stringify({ 
+        text: questions, 
+        message: 'Message generated successfully',
+        seed: seed 
+      }),
       {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -23,7 +35,7 @@ export async function POST(req: Request) {
   }
 }
 
-function generateQuestions() {
+function generateQuestions(seed: number) {
   const questionTemplates = [
     "What's something new you've learned recently?",
     "If you could visit any place in the world, where would it be?",
@@ -131,64 +143,96 @@ function generateQuestions() {
     "What aspect of our recent project could have been handled differently?",
     "What's something that frustrates you but you haven't had a chance to address?",
     "How could communication be improved within our team?",
-    "What's one change that would make your daily work experience better?"
+    "What's one change that would make your daily work experience better?",
+
+    "What's the most embarrassing thing you've done while drunk?",
+    "Who's your secret celebrity crush that you've never admitted to anyone?",
+    "What's the weirdest thing you've ever googled?",
+    "Have you ever pretended to know someone famous just to impress others?",
+    "What's the worst fashion choice you've ever made that you thought was cool?",
+    "Have you ever stalked an ex on social media and accidentally liked their post?",
+    "What's your most embarrassing bathroom-related story?",
+    "Have you ever sent a spicy text to the wrong person? What happened?",
+    "What's the most ridiculous lie you've told to get out of plans?",
+    "If your internet search history was made public, what would be the most embarrassing thing people would find?",
+    "What's the most awkward date you've ever been on?",
+    "Have you ever laughed at a completely inappropriate time? When was it?",
+    "What's the weirdest thing you've done when you thought no one was watching?",
+    "Have you ever had a wardrobe malfunction in public?",
+    "What's your guilty pleasure TV show or movie that you'd be embarrassed if people knew you loved?",
   ];
 
-  shuffleArray(questionTemplates);
+  seededShuffleArray(questionTemplates, seed);
 
-  return selectDiverseQuestions(questionTemplates, 3).join('||');
+  return selectDiverseAndNonRepeatingQuestions(questionTemplates, 3).join('||');
 }
 
-function selectDiverseQuestions(questions: string[], count: number): string[] {
-  const selected: string[] = [];
-  const patternMap: Record<string, boolean> = {};
-
-  const getPattern = (question: string): string => {
-    if (question.startsWith("What's")) return "whats";
-    if (question.startsWith("If you could")) return "ifyoucould";
-    if (question.startsWith("Would you rather")) return "wouldyourather";
-    if (question.startsWith("Have you ever")) return "haveyouever";
-    if (question.startsWith("Do you believe")) return "doyoubelieve";
-    if (question.startsWith("Which")) return "which";
-    if (question.startsWith("How")) return "how";
-    if (question.startsWith("Who")) return "who";
-    if (question.startsWith("When")) return "when";
-    if (question.startsWith("Where")) return "where";
-    if (question.startsWith("Why")) return "why";
-    if (question.startsWith("Can")) return "can";
-    if (question.startsWith("Are")) return "are";
-    if (question.startsWith("Is")) return "is";
-    if (question.startsWith("Tell me")) return "tellme";
-
-    return question.split(' ').slice(0, 2).join('').toLowerCase();
-  };
-
-  for (const question of questions) {
+function selectDiverseAndNonRepeatingQuestions(questions: string[], count: number): string[] {
+  const categories: Record<string, string[]> = {};
+  
+  questions.forEach(question => {
     const pattern = getPattern(question);
-    
-    if (!patternMap[pattern]) {
+    if (!categories[pattern]) {
+      categories[pattern] = [];
+    }
+    categories[pattern].push(question);
+  });
+  
+  const selected: string[] = [];
+  const categoryKeys = Object.keys(categories);
+
+  while (selected.length < count && categoryKeys.length > 0) {
+    const categoryIndex = selected.length % categoryKeys.length;
+    const category = categoryKeys[categoryIndex];
+
+    if (categories[category].length > 0) {
+      const question = categories[category].shift()!;
       selected.push(question);
-      patternMap[pattern] = true;
-      
-      if (selected.length === count) {
-        break;
-      }
+    } else {
+      categoryKeys.splice(categoryIndex, 1);
     }
   }
 
   if (selected.length < count) {
-    for (const question of questions) {
-      if (!selected.includes(question)) {
-        selected.push(question);
-        
-        if (selected.length === count) {
-          break;
-        }
-      }
+    const remaining = questions.filter(q => !selected.includes(q));
+    for (let i = 0; i < remaining.length && selected.length < count; i++) {
+      selected.push(remaining[i]);
     }
   }
 
   return selected;
+}
+
+function getPattern(question: string): string {
+  if (question.startsWith("What's")) return "whats";
+  if (question.startsWith("If you could")) return "ifyoucould";
+  if (question.startsWith("Would you rather")) return "wouldyourather";
+  if (question.startsWith("Have you ever")) return "haveyouever";
+  if (question.startsWith("Do you believe")) return "doyoubelieve";
+  if (question.startsWith("Which")) return "which";
+  if (question.startsWith("How")) return "how";
+  if (question.startsWith("Who")) return "who";
+  if (question.startsWith("When")) return "when";
+  if (question.startsWith("Where")) return "where";
+  if (question.startsWith("Why")) return "why";
+  if (question.startsWith("Can")) return "can";
+  if (question.startsWith("Are")) return "are";
+  if (question.startsWith("Is")) return "is";
+  if (question.startsWith("Tell me")) return "tellme";
+
+  return question.split(' ').slice(0, 2).join('').toLowerCase();
+}
+
+function seededShuffleArray(array: string[], seed: number): void {
+  const seededRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
 
 function shuffleArray(array: string[]): void {
