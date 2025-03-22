@@ -7,6 +7,8 @@ export interface Message extends Document {
   reply?: string;
   repliedAt?: Date;
   username?: string;
+  isRead?: boolean;
+  notificationsEnabled?:boolean
 }
 
 const MessageSchema: Schema<Message> = new mongoose.Schema({
@@ -26,21 +28,35 @@ const MessageSchema: Schema<Message> = new mongoose.Schema({
   repliedAt: {
     type: Date,
     default: null
+  },
+  isRead: {  
+    type: Boolean,
+    default: false
+  },
+  notificationsEnabled:{
+    type:Boolean,
+    default:true
   }
 });
+
+export interface NotificationStatusChange {
+  enabled: boolean;
+  timestamp: Date;
+}
 
 export interface User extends Document {
   username: string;
   email: string;
   password: string;
-  verifyCode?: string; // Make optional
-  verifyCodeExpiry?: Date; // Make optional
+  verifyCode?: string; 
+  verifyCodeExpiry?: Date; 
   isVerified: boolean;
   isAcceptingMessages: boolean;
+  showQuestions: boolean; 
+  notificationStatusChanges: NotificationStatusChange[];
   messages: Message[];
 }
 
-// Updated User schema
 const UserSchema: Schema<User> = new mongoose.Schema({
   username: {
     type: String,
@@ -60,11 +76,11 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   },
   verifyCode: {
     type: String,
-    required:false
+    required: false
   },
   verifyCodeExpiry: {
     type: Date,
-    required:false
+    required: false
   },
   isVerified: {
     type: Boolean,
@@ -74,6 +90,19 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  showQuestions: {
+    type: Boolean,
+    default: true,  
+  },
+  notificationStatusChanges: [
+    {
+      enabled: Boolean,
+      timestamp: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   messages: [MessageSchema]
 });
 
