@@ -32,7 +32,6 @@ function DashboardNavbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-700/50 bg-slate-900/90 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between px-3 sm:px-4">
-        {/* Logo & Branding */}
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-md flex items-center justify-center transform rotate-6">
             <MessageCircle className="w-4 h-4 text-white transform -rotate-6" />
@@ -42,7 +41,6 @@ function DashboardNavbar() {
           </span>
         </div>
 
-        {/* Mobile menu button */}
         <button 
           className="md:hidden p-2 rounded-md text-slate-400 hover:bg-slate-800"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -51,9 +49,7 @@ function DashboardNavbar() {
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4" style={{margin:" 1px -108px -6px 0px"}}>
-          {/* Sound Toggle */}
           <TooltipProvider delayDuration={100}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -72,7 +68,6 @@ function DashboardNavbar() {
             </Tooltip>
           </TooltipProvider>
 
-          {/* User Account */}
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -126,7 +121,6 @@ function DashboardNavbar() {
         </div>
       </div>
 
-      {/* Mobile menu - Fixed position instead of pushing content */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed top-16 left-0 right-0 z-50 bg-slate-900 border-t border-slate-800">
           <div className="px-3 py-3 space-y-2">
@@ -163,17 +157,25 @@ function DashboardNavbar() {
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </Button>
-            <div className="flex items-center justify-between px-2 py-2">
-              <span className="text-slate-400 text-sm">Notification sounds</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-slate-400 hover:text-white"
-                onClick={toggleSound}
-              >
-                {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
-              </Button>
-            </div>
+            <Button 
+              variant="ghost" 
+              className={cn(
+              "w-full justify-start hover:bg-slate-800 transition-colors",
+              soundEnabled ? "text-indigo-400" : "text-slate-400"
+              )}
+              onClick={() => {
+              toggleSound();
+              setMobileMenuOpen(false);
+              }}
+              aria-label={soundEnabled ? "Disable notification sounds" : "Enable notification sounds"}
+              aria-pressed={soundEnabled}
+            >
+              {soundEnabled ? 
+              <Volume2 className="mr-2 h-4 w-4 transition-transform duration-200 ease-in-out" /> : 
+              <VolumeX className="mr-2 h-4 w-4 transition-transform duration-200 ease-in-out" />
+              }
+              <span>{soundEnabled ? "Sound: On" : "Sound: Off"}</span>
+            </Button>
             <Button 
               variant="ghost" 
               className="w-full justify-start text-red-400 hover:bg-red-900/20"
