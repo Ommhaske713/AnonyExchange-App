@@ -55,7 +55,6 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
     }
   };
 
-  // Update the handleReply function
   const handleReply = async () => {
     if (!reply.trim()) return;
 
@@ -70,8 +69,8 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
         description: response.data.message,
       });
 
-      setReply(''); // Clear reply input
-      onMessageReply(); // Notify parent to refresh messages
+      setReply(''); 
+      onMessageReply(); 
     } catch (error) {
       const axiosError = error as AxiosError;
       toast({
@@ -111,7 +110,7 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
             </div>
           </div>
           <div className="flex items-center gap-1 sm:gap-2" onClick={stopPropagation}>
-            {!isReplying && (
+            {!isReplying && !message.reply && (
               <Button
                 variant="ghost"
                 size="icon"
@@ -159,7 +158,6 @@ export function MessageCard({ message, isReplying, onReplyToggle, onMessageDelet
       </CardHeader>
 
       <CardContent className="p-0">
-        {/* Reply section */}
         {message.reply ? (
           <div className="mt-4 border-t border-white/10 pt-4">
             <div className="bg-blue-50 rounded-lg p-4">
