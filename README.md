@@ -1,6 +1,6 @@
 # AnonyExchange - Anonymous Feedback & Messaging Platform
 
-AnonyExchange is a modern, secure platform for anonymous communication. It enables users to receive honest feedback and engage in genuine conversations while maintaining sender anonymity.
+AnonyExchange is a modern, secure platform for anonymous communication. It enables users to receive honest feedback,questions and messages and engage in genuine conversations while maintaining sender anonymity.
 
 <img alt="AnonyExchange Banner" src="https://placeholder-for-banner-image.com/">
 
