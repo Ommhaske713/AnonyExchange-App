@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 import { Message } from '@/model/User';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function QuestionsPage() {
+// Create a client component that uses useSearchParams
+function QuestionsContent() {
   const { data: session, status } = useSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -757,5 +758,20 @@ export default function QuestionsPage() {
         </footer>
       </div>
     </>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white">Loading questions...</p>
+        </div>
+      </div>
+    }>
+      <QuestionsContent />
+    </Suspense>
   );
 }
