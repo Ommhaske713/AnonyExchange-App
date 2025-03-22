@@ -1,5 +1,17 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/options';
+
+async function createSession(user: any) {
+  return {
+    id: user._id.toString(),
+    name: user.name,
+    email: user.email,
+    username: user.username,
+    image: user.image || null
+  };
+}
 
 export async function POST(request: Request) {
     await dbConnect();
@@ -9,7 +21,6 @@ export async function POST(request: Request) {
 
         const decodedUsername = decodeURIComponent(username);
 
-        // 🔍 Find the user by username
         const user = await UserModel.findOne({ username: decodedUsername });
 
         if (!user) {
@@ -19,20 +30,28 @@ export async function POST(request: Request) {
             );
         }
 
-        // ✅ Check if the entered code matches the stored verifyCode
         const isCodeValid = user.verifyCode === code;
         const isCodeNotExpired = user.verifyCodeExpiry ? new Date(user.verifyCodeExpiry) > new Date() : false;
 
         if (isCodeValid && isCodeNotExpired) {
-            // ✅ Mark the user as verified
             user.isVerified = true;
-            user.verifyCode = undefined; // Clear the verification code
-            user.verifyCodeExpiry = undefined; // Clear the verification code expiry
+            user.verifyCode = undefined; 
+            user.verifyCodeExpiry = undefined;
             await user.save();
 
+            const session = await createSession(user);
+
             return Response.json(
-                { success: true, message: "Account verified successfully" },
-                { status: 200 }
+                { 
+                    success: true, 
+                    message: "Account verified successfully",
+                    session: session  
+                },
+                { 
+                    status: 200,
+                    headers: {
+                    }
+                }
             );
         } else if (!isCodeNotExpired) {
             return Response.json(
