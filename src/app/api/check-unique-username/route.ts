@@ -1,68 +1,62 @@
 import UserModel from "@/model/User";
-import {z} from "zod"
-import {usernameValidation} from "@/schema/signUpSchema"
+import { z } from "zod"
+import { usernameValidation } from "@/schema/signUpSchema"
 import dbConnect from "@/lib/dbConnect";
 
 const usernameQuerySchema = z.object({
-    username:usernameValidation
+    username: usernameValidation
 })
 
-export async function GET(request:Request) {
-    
+export async function GET(request: Request) {
     await dbConnect()
 
     try {
-
-        const {searchParams} = new URL(request.url)
+        const { searchParams } = new URL(request.url)
         const querySchema = {
-            username:searchParams.get('username')
+            username: searchParams.get('username')
         }
 
         const result = usernameQuerySchema.safeParse(querySchema)
 
-        console.log(result)
-
         if (!result.success) {
             const usernameErrors = result.error.format().username?._errors || []
             return Response.json({
-                success:false,
-                messaage:"Invalid query parameter"
-    
+                success: false,
+                message: "Invalid username format",
+                errors: usernameErrors
             },
-            {status:400}
-           )
+            { status: 400 }
+            )
         }
 
-       const {username} = result.data
+        const { username } = result.data
 
-       const existingVerifiedUser = await UserModel.findOne({username,isVerified:true})
+        const existingUser = await UserModel.findOne({ username }) 
 
-       if (existingVerifiedUser) {
+        if (existingUser) {
+            return Response.json({
+                success: false,
+                message: "Username is already taken"
+            },
+            { status: 409 } 
+            )
+        }
+
         return Response.json({
-            success:false,
-            messaage:"username is already taken"
-
+            success: true,
+            message: "Username is available"
         },
-        {status:400}
-       )
-       }
-
-       return Response.json({
-        success:true,
-        messaage:"username is unique"
-
-        },
-        {status:200}
-    )
+        { status: 200 }
+        )
         
     } catch (error) {
-        console.error("Error while checking unique username :",error)
+        console.error("Error while checking unique username:", error)
         return Response.json({
-            success:false,
-            messaage:"Error checking unique username"
-
+            success: false,
+            message: "Error checking unique username",
+            error: process.env.NODE_ENV === 'development' ? String(error) : undefined
         },
-        {status:500}
-       )
-   }
-} 
+        { status: 500 }
+        )
+    }
+}
