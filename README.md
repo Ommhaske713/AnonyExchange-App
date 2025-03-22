@@ -2,15 +2,17 @@
 
 AnonyExchange is a modern, secure platform for anonymous communication. It enables users to receive honest feedback,questions and messages and engage in genuine conversations while maintaining sender anonymity.
 
-<div align="center" style="margin: 30px 0">
-    <h2>🖼️ App Screenshots</h2>
-    
-    <img alt="AnonyExchange Banner" src="./public/Images/Home.png" width="100%" style="max-width: 800px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    
-    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
-        <img alt="AnonyExchange Question Page" src="./public/Images/Question.png" width="48%" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        <img alt="AnonyExchange Send Message Page" src="./public/Images/SendMessage.png" width="48%" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-    </div>
+## 🖼️ App Screenshots
+
+<div align="center">
+
+![AnonyExchange Home Page](./public/Images/Home.png)
+
+<div>
+    <img src="./public/Images/Question.png" alt="AnonyExchange Question Page" width="49%">
+    <img src="./public/Images/SendMessage.png" alt="AnonyExchange Send Message Page" width="49%">
+</div>
+
 </div>
 
 ## 🌟 Features
