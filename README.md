@@ -9,8 +9,8 @@ AnonyExchange is a modern, secure platform for anonymous communication. It enabl
 ![AnonyExchange Home Page](./public/Images/Home.png)
 
 <div>
-    <img src="./public/Images/Question.png" alt="AnonyExchange Question Page" width="50%">
-    <img src="./public/Images/SendMessage.png" alt="AnonyExchange Send Message Page" width="50%">
+    <img src="./public/Images/Question.png" alt="AnonyExchange Question Page" width="49%">
+    <img src="./public/Images/SendMessage.png" alt="AnonyExchange Send Message Page" width="49%">
 </div>
 
 </div>
