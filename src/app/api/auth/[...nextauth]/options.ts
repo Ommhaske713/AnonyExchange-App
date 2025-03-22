@@ -6,13 +6,33 @@ import bcrypt from "bcryptjs"
 import exp from "constants";
 import Email from "next-auth/providers/email";
 
+declare module "next-auth" {
+  interface User {
+    _id?: string;
+    isAcceptingMessages?: boolean;
+    isVerified?: boolean;
+    username?: string;
+    showQuestions?: boolean;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    _id?: string;
+    isAcceptingMessages?: boolean;
+    isVerified?: boolean;
+    username?: string;
+    showQuestions?: boolean;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             id: 'credentials',
             name: 'Credentials',
             credentials: {
-                email: { label: 'Email or Username', type: 'text' },
+                identifier: { label: 'Email or Username', type: 'text' },
                 password: { label: 'Password', type: 'password' },
             },
             async authorize(credentials: any): Promise<any> {
@@ -46,6 +66,7 @@ export const authOptions: NextAuthOptions = {
                         username: user.username,
                         isVerified: user.isVerified,
                         isAcceptingMessages: user.isAcceptingMessages,
+                        showQuestions: user.showQuestions, 
                     };
                 } catch (err: any) {
                     throw new Error(err);
@@ -61,6 +82,7 @@ export const authOptions: NextAuthOptions = {
                 token.isAcceptingMessages = user.isAcceptingMessages;
                 token.username = user.username;
                 token.isVerified = user.isVerified;
+                token.showQuestions = user.showQuestions; 
             }
             return token
         },
@@ -70,6 +92,7 @@ export const authOptions: NextAuthOptions = {
                 session.user.isAcceptingMessages = token.isAcceptingMessages;
                 session.user.isVerified = token.isVerified;
                 session.user.username = token.username;
+                session.user.showQuestions = token.showQuestions; 
             }
             return session
           }
