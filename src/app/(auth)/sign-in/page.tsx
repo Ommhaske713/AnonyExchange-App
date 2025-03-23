@@ -10,7 +10,7 @@ import axios, { AxiosError } from 'axios';
 import { Loader2, Mail, Lock, ArrowLeft, User, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signInSchema } from '@/schema/signInSchema';
-import { useRouter, usePathname} from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ export default function SignIn() {
   const pathname = usePathname();
   const [showPassword, setShowPassword] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -113,41 +113,48 @@ export default function SignIn() {
     }
   }, []);
 
+  useEffect(() => {
+    if (session) {
+      router.replace('/dashboard');
+    }
+  }, [session, router]);
+
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    const result = await signIn('credentials', {
-      redirect: false,
-      identifier: data.identifier,
-      password: data.password,
-    });
-  
-    if (result?.error) {
-      if (result.error === 'CredentialsSignin') {
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        identifier: data.identifier,
+        password: data.password,
+      });
+
+      if (result?.error) {
         toast({
           title: 'Login Failed',
-          description: 'Incorrect username or password',
-          className: 'bg-red-500 text-white',
-        });
-      } else {
-        toast({
-          title: 'Error',
-          description: result.error,
+          description: result.error === 'CredentialsSignin'
+            ? 'Incorrect username or password'
+            : result.error,
           className: 'bg-red-500 text-white',
         });
       }
-    } else if (result?.ok) {
+      else if (result?.ok) {
+        toast({
+          title: 'Success',
+          description: 'Logged in successfully',
+          className: 'bg-green-500 text-white',
+        });
+
+        // Force a hard navigation to dashboard after showing toast
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Sign in error:', error);
       toast({
-        title: 'Success',
-        description: 'Logged in successfully',
-        className: 'bg-green-500 text-white',
+        title: 'Error',
+        description: 'An unexpected error occurred',
+        className: 'bg-red-500 text-white',
       });
-      
-      // Force a session update before redirecting
-      const { update } = useSession();
-      await update();
-      
-      setTimeout(() => {
-        router.replace('/dashboard');
-      }, 1000); // Reduced to 1 second, still enough time for toast to be visible
     }
   };
 
@@ -171,7 +178,7 @@ export default function SignIn() {
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300 px-2 md:px-4 h-8 md:h-10 text-sm md:text-base"
-          onClick={() => router.push('/')}
+          onClick={() => window.location.href = '/'}
         >
           <ArrowLeft className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
           <span className="hidden sm:inline">Back to Home</span>
