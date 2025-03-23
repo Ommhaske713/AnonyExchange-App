@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import ViewExperienceTip from '@/components/ViewExperienceTip';
 
 export default function Home() {
   const router = useRouter();
@@ -486,6 +487,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <ViewExperienceTip />
     </div>
   );
 }
