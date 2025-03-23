@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { User as UserType } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,20 +51,19 @@ function UserDashboard() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const { toast } = useToast();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [replyingMessageId, setReplyingMessageId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(AcceptMessageSchema),
   });
-
   const { register, watch, setValue } = form;
   const acceptMessages = watch('acceptMessages');
-
   const answeredCount = messages.filter(msg => !!msg.reply).length;
   const pendingCount = messages.filter(msg => !msg.reply).length;
 
@@ -207,6 +207,27 @@ function UserDashboard() {
     }
   };
 
+  useEffect(() => {
+    // Add this check to prevent premature redirection
+    if (status === 'loading') return;
+    
+    // Only redirect if definitely unauthenticated
+    if (status === 'unauthenticated') {
+      router.replace('/sign-in');
+    }
+  }, [status, router]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-10 w-10 animate-spin text-indigo-500 mb-4" />
+          <p className="text-slate-300">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+  
   if (!session?.user) return null;
 
   const { username } = session.user as UserType;
