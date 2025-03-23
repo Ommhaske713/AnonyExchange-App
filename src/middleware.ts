@@ -12,7 +12,7 @@ export default async function middleware(request: NextRequestWithAuth) {
   
   const url = request.nextUrl.clone();
 
-  const publicPaths = ['/sign-in', '/sign-up', '/verify', '/u', '/questions', '/reset-password'];
+  const publicPaths = ['/', '/sign-in', '/sign-up', '/verify', '/u', '/questions', '/reset-password'];
   const isPublicPath = publicPaths.some(path => 
     url.pathname === path || url.pathname.startsWith(`${path}/`)
   );
@@ -23,7 +23,7 @@ export default async function middleware(request: NextRequestWithAuth) {
     console.log('User has token, redirecting to dashboard');
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-  
+
   if (!token && isDashboardPath) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
@@ -36,5 +36,11 @@ export default async function middleware(request: NextRequestWithAuth) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/dashboard/:path*',
+    '/settings/:path*',
+    '/profile/:path*',
+    '/sign-in', 
+    '/sign-up'
+  ],
 }
