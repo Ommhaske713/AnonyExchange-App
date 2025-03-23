@@ -143,7 +143,6 @@ export default function SignIn() {
           className: 'bg-green-500 text-white',
         });
 
-        // Force a hard navigation to dashboard after showing toast
         setTimeout(() => {
           window.location.href = '/dashboard';
         }, 1000);
@@ -174,16 +173,17 @@ export default function SignIn() {
       />
 
       <div className="absolute top-2 left-2 z-50 md:top-8 md:left-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300 px-2 md:px-4 h-8 md:h-10 text-sm md:text-base"
-          onClick={() => window.location.href = '/'}
-        >
-          <ArrowLeft className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
-          <span className="hidden sm:inline">Back to Home</span>
-          <span className="sm:hidden">Back</span>
-        </Button>
+        <Link href="/" passHref>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300 px-2 md:px-4 h-8 md:h-10 text-sm md:text-base"
+          >
+            <ArrowLeft className="mr-1 h-3 w-3 md:mr-2 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">Back to Home</span>
+            <span className="sm:hidden">Back</span>
+          </Button>
+        </Link>
       </div>
 
       <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl sm:rounded-3xl relative z-10">
