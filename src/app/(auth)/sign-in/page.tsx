@@ -10,7 +10,7 @@ import axios, { AxiosError } from 'axios';
 import { Loader2, Mail, Lock, ArrowLeft, User, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signInSchema } from '@/schema/signInSchema';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname} from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 
 export default function SignIn() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function SignIn() {
       identifier: data.identifier,
       password: data.password,
     });
-
+  
     if (result?.error) {
       if (result.error === 'CredentialsSignin') {
         toast({
@@ -133,17 +134,20 @@ export default function SignIn() {
           className: 'bg-red-500 text-white',
         });
       }
-    }
-
-    if (result?.url) {
+    } else if (result?.ok) {
       toast({
         title: 'Success',
         description: 'Logged in successfully',
         className: 'bg-green-500 text-white',
       });
+      
+      // Force a session update before redirecting
+      const { update } = useSession();
+      await update();
+      
       setTimeout(() => {
         router.replace('/dashboard');
-      }, 1500);
+      }, 1000); // Reduced to 1 second, still enough time for toast to be visible
     }
   };
 
