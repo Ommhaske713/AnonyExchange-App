@@ -20,9 +20,10 @@ export default async function middleware(request: NextRequestWithAuth) {
   const isDashboardPath = url.pathname === '/dashboard' || url.pathname.startsWith('/dashboard/');
 
   if (token && (url.pathname === '/sign-in' || url.pathname === '/sign-up')) {
+    console.log('User has token, redirecting to dashboard');
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-
+  
   if (!token && isDashboardPath) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
